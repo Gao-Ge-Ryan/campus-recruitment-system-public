@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.EmploymentDao">
+
+    <resultMap type="com.caohao.pojo.model.EmploymentModel" id="EmploymentMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="education" column="education" javaType="com.caohao.common.enums.impl.EmploymentEducationEnum" typeHandler="com.caohao.config.EnumValueTypeHandler"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="minSalary" column="min_salary" jdbcType="VARCHAR"/>
+        <result property="maxSalary" column="max_salary" jdbcType="VARCHAR"/>
+        <result property="companyId" column="company_id" jdbcType="VARCHAR"/>
+        <result property="treatment" column="treatment" jdbcType="VARCHAR"/>
+        <association property="companyModel"  resultMap="com.caohao.dao.CompanyDao.CompanyMap"  columnPrefix="company_"></association>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="EmploymentMap">
+        select
+          id, user_id, title, description, education, position, create_time, update_time, status, min_salary, company_id, treatment , max_salary
+        from employment
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="EmploymentMap">
+        select
+        et.id, et.user_id, et.title, et.description, et.education, et.position, et.create_time, et.update_time, et.status, et.min_salary, et.company_id, et.treatment , et.max_salary
+        ,cy.id as company_id, cy.company_number as company_company_number, cy.name as company_name, cy.description as company_description, cy.user_id as company_user_id, cy.create_time as company_create_time, cy.update_time as company_update_time, cy.status as company_status, cy.processor as company_processor, cy.reply_time as company_reply_time, cy.reply_content as company_reply_content, cy.number as company_number, cy.category as company_category, cy.`nature` as company_nature, cy.`company_logo` as company_company_logo
+        from employment et
+        left join company cy on et.`company_id` = cy.`id`
+        <where>
+            <if test="id != null and id != ''">
+                and et.id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                and et.user_id = #{userId}
+            </if>
+            <if test="title != null and title != ''">
+                and et.title like "%${title}%"
+            </if>
+            <if test="description != null and description != ''">
+                and et.description = #{description}
+            </if>
+            <if test="education != null">
+                and et.education = #{education,typeHandler=com.caohao.config.EnumValueTypeHandler}
+            </if>
+            <if test="position != null and position != ''">
+                and et.position = #{position}
+            </if>
+            <if test="createTime != null">
+                and et.create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and et.update_time = #{updateTime}
+            </if>
+            <if test="status != null">
+                and et.status = #{status}
+            </if>
+            <if test="minSalary != null and minSalary != ''">
+                and et.salary = #{salary}
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and et.company_id = #{companyId}
+            </if>
+            <if test="treatment != null and treatment != ''">
+                and et.treatment = #{treatment}
+            </if>
+        </where>
+        order by et.create_time DESC
+    </select>
+    <select id="selectByCompanyId" resultType="com.caohao.pojo.model.EmploymentModel">
+        select * from employment where company_id = #{companyId}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into employment(id, user_id, title, description, education, position, create_time, update_time, status, min_salary, company_id, treatment,
+                               max_salary)
+        values (#{id}, #{userId}, #{title}, #{description}, #{education,typeHandler=com.caohao.config.EnumValueTypeHandler}, #{position}, #{createTime}, #{updateTime}, #{status}, #{minSalary}, #{companyId}, #{treatment},#{maxSalary})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into employment(id, user_id, title, description, education, position, create_time, update_time, status, salary, company_id, treatment)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.userId}, #{entity.title}, #{entity.description}, #{entity.education}, #{entity.position}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.salary}, #{entity.companyId}, #{entity.treatment})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into employment(user_id, title, description, education, position, create_time, update_time, status, salary, company_id, treatment)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.title}, #{entity.description}, #{entity.education}, #{entity.position}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.salary}, #{entity.companyId}, #{entity.treatment})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        title = values(title),
+        description = values(description),
+        education = values(education),
+        position = values(position),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        status = values(status),
+        salary = values(salary),
+        company_id = values(company_id),
+        treatment = values(treatment)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update employment
+        <set>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="education != null">
+                education = #{education,typeHandler=com.caohao.config.EnumValueTypeHandler},
+            </if>
+            <if test="position != null and position != ''">
+                position = #{position},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="minSalary != null and minSalary != ''">
+                min_salary = #{minSalary},
+            </if>
+            <if test="maxSalary != null and maxSalary != ''">
+                max_salary = #{maxSalary},
+            </if>
+            <if test="companyId != null and companyId != ''">
+                company_id = #{companyId},
+            </if>
+            <if test="treatment != null and treatment != ''">
+                treatment = #{treatment},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from employment where id = #{id}
+    </delete>
+    <delete id="deleteByCompanyId">
+        delete from employment where company_id = #{companyId}
+    </delete>
+
+</mapper>
+

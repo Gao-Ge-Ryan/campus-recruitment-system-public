@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.UserResumeDao">
+
+    <resultMap type="com.caohao.pojo.entity.UserResume" id="UserResumeMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="resumeUrl" column="resume_url" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="extension" column="extension" jdbcType="VARCHAR"/>
+        <result property="resumeName" column="resume_name" jdbcType="VARCHAR"/>
+        <result property="resumeType" column="resume_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserResumeMap">
+        select
+          id, user_id, create_time, resume_url, type, extension, resume_name, resume_type
+        from user_resume
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserResumeMap">
+        select
+          id, user_id, create_time, resume_url, type, extension, resume_name, resume_type
+        from user_resume
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="resumeUrl != null and resumeUrl != ''">
+                and resume_url = #{resumeUrl}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="extension != null and extension != ''">
+                and extension = #{extension}
+            </if>
+            <if test="resumeName != null and resumeName != ''">
+                and resume_name = #{resumeName}
+            </if>
+            <if test="resumeType != null">
+                and resume_type = #{resumeType}
+            </if>
+        </where>
+    </select>
+    <select id="getResumeByUserName" resultMap="UserResumeMap">
+        select * from user_resume where user_id = #{username}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into user_resume(id, user_id, create_time, resume_url, type, extension, resume_name, resume_type)
+        values (#{id}, #{userId}, #{createTime}, #{resumeUrl}, #{type}, #{extension}, #{resumeName}, #{resumeType})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into user_resume(id, user_id, create_time, resume_url, type, extension, resume_name, resume_type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.userId}, #{entity.createTime}, #{entity.resumeUrl}, #{entity.type}, #{entity.extension}, #{entity.resumeName}, #{entity.resumeType})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into user_resume(user_id, create_time, resume_url, type, extension, resume_name, resume_type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.createTime}, #{entity.resumeUrl}, #{entity.type}, #{entity.extension}, #{entity.resumeName}, #{entity.resumeType})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        create_time = values(create_time),
+        resume_url = values(resume_url),
+        type = values(type),
+        extension = values(extension),
+        resume_name = values(resume_name),
+        resume_type = values(resume_type)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update user_resume
+        <set>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="resumeUrl != null and resumeUrl != ''">
+                resume_url = #{resumeUrl},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="extension != null and extension != ''">
+                extension = #{extension},
+            </if>
+            <if test="resumeName != null and resumeName != ''">
+                resume_name = #{resumeName},
+            </if>
+            <if test="resumeType != null">
+                resume_type = #{resumeType},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from user_resume where id = #{id}
+    </delete>
+
+</mapper>
+

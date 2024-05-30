@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.CommentReplyRelationDao">
+
+    <resultMap type="com.caohao.pojo.entity.CommentReplyRelation" id="CommentReplyRelationMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="replyInfoId" column="reply_info_id" jdbcType="VARCHAR"/>
+        <result property="commentsId" column="comments_id" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="parentReplyId" column="parent_reply_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CommentReplyRelationMap">
+        select
+          id, reply_info_id, comments_id, type, parent_reply_id, create_time
+        from comment_reply_relation
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CommentReplyRelationMap">
+        select
+          id, reply_info_id, comments_id, type, parent_reply_id, create_time
+        from comment_reply_relation
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="replyInfoId != null and replyInfoId != ''">
+                and reply_info_id = #{replyInfoId}
+            </if>
+            <if test="commentsId != null and commentsId != ''">
+                and comments_id = #{commentsId}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="parentReplyId != null and parentReplyId != ''">
+                and parent_reply_id = #{parentReplyId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into comment_reply_relation(id, reply_info_id, comments_id, type, parent_reply_id, create_time)
+        values (#{id}, #{replyInfoId}, #{commentsId}, #{type}, #{parentReplyId}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into comment_reply_relation(id, reply_info_id, comments_id, type, parent_reply_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.replyInfoId}, #{entity.commentsId}, #{entity.type}, #{entity.parentReplyId}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into comment_reply_relation(reply_info_id, comments_id, type, parent_reply_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.replyInfoId}, #{entity.commentsId}, #{entity.type}, #{entity.parentReplyId}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        reply_info_id = values(reply_info_id),
+        comments_id = values(comments_id),
+        type = values(type),
+        parent_reply_id = values(parent_reply_id),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update comment_reply_relation
+        <set>
+            <if test="replyInfoId != null and replyInfoId != ''">
+                reply_info_id = #{replyInfoId},
+            </if>
+            <if test="commentsId != null and commentsId != ''">
+                comments_id = #{commentsId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="parentReplyId != null and parentReplyId != ''">
+                parent_reply_id = #{parentReplyId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from comment_reply_relation where id = #{id}
+    </delete>
+
+</mapper>
+

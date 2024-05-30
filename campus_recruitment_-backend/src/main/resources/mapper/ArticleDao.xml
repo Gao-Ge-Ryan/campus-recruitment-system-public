@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.ArticleDao">
+
+    <resultMap type="com.caohao.pojo.model.ArticleModel" id="ArticleMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="picPath" column="pic_path" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+        <result property="type" column="type" javaType="com.caohao.common.enums.impl.ArticleTypeEnum" typeHandler="com.caohao.config.EnumValueTypeHandler"/>
+        <result property="collectNumber" column="collect_number" jdbcType="INTEGER"/>
+        <result property="thumbUp" column="thumb_up" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ArticleMap">
+        select
+          id, title, content, pic_path, user_id, create_time, update_time, type, collect_number, thumb_up
+        from article
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ArticleMap">
+        select
+          id, title, content, pic_path, user_id, create_time, update_time, type, collect_number, thumb_up
+        from article
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title like "%${title}%"
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="picPath != null and picPath != ''">
+                and pic_path = #{picPath}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="type != null">
+                and type = #{type,typeHandler=com.caohao.config.EnumValueTypeHandler}
+            </if>
+            <if test="collectNumber != null">
+                and collect_number = #{collectNumber}
+            </if>
+            <if test="thumbUp != null">
+                and thumb_up = #{thumbUp}
+            </if>
+        </where>
+        order by create_time  DESC
+    </select>
+    <select id="queryByUser" resultMap="ArticleMap">
+        select * from article where user_id = #{username}
+        <if test="type != null">
+            and type = #{type,typeHandler=com.caohao.config.EnumValueTypeHandler}
+        </if>
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into article(id, title, content, pic_path, user_id, create_time, update_time, type, collect_number, thumb_up)
+        values (#{id}, #{title}, #{content}, #{picPath}, #{userId}, #{createTime}, #{updateTime}, #{type,typeHandler=com.caohao.config.EnumValueTypeHandler}, #{collectNumber}, #{thumbUp})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into article(id, title, content, pic_path, user_id, create_time, update_time, type, collect_number, thumb_up)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.title}, #{entity.content}, #{entity.picPath}, #{entity.userId}, #{entity.createTime}, #{entity.updateTime}, #{entity.type}, #{entity.collectNumber}, #{entity.thumbUp})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into article(title, content, pic_path, user_id, create_time, update_time, type, collect_number, thumb_up)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}, #{entity.content}, #{entity.picPath}, #{entity.userId}, #{entity.createTime}, #{entity.updateTime}, #{entity.type}, #{entity.collectNumber}, #{entity.thumbUp})
+        </foreach>
+        on duplicate key update
+        title = values(title),
+        content = values(content),
+        pic_path = values(pic_path),
+        user_id = values(user_id),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        type = values(type),
+        collect_number = values(collect_number),
+        thumb_up = values(thumb_up)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update article
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="picPath != null and picPath != ''">
+                pic_path = #{picPath},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="type != null">
+                type = #{type,typeHandler=com.caohao.config.EnumValueTypeHandler},
+            </if>
+            <if test="collectNumber != null">
+                collect_number = #{collectNumber},
+            </if>
+            <if test="thumbUp != null">
+                thumb_up = #{thumbUp},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from article where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.CompanyDao">
+
+    <resultMap type="com.caohao.pojo.model.CompanyModel" id="CompanyMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="companyNumber" column="company_number" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+        <result property="status" column="status" javaType="com.caohao.common.enums.impl.CompanyStatusEnum" typeHandler="com.caohao.config.EnumValueTypeHandler"/>
+        <result property="processor" column="processor" jdbcType="VARCHAR"/>
+        <result property="replyTime" column="reply_time" jdbcType="INTEGER"/>
+        <result property="replyContent" column="reply_content" jdbcType="INTEGER"/>
+        <result property="number" column="number" jdbcType="INTEGER"/>
+        <result property="category" column="category" javaType="com.caohao.common.enums.impl.CompanyCategoryEnum" typeHandler="com.caohao.config.EnumValueTypeHandler"/>
+        <result property="companyLogo" column="company_logo" jdbcType="VARCHAR"/>
+        <result property="nature" column="nature" javaType="com.caohao.common.enums.impl.CompanyNatureEnum" typeHandler="com.caohao.config.EnumValueTypeHandler"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CompanyMap">
+        select
+          id, company_number, name, description, user_id, create_time, update_time, status, processor, reply_time, reply_content, number, category, nature, company_logo
+        from company
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CompanyMap">
+        select
+          id, company_number, name, description, user_id, create_time, update_time, status, processor, reply_time, reply_content, number, category, nature, company_logo
+        from company
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="companyNumber != null and companyNumber != ''">
+                and company_number = #{companyNumber}
+            </if>
+            <if test="name != null and name != ''">
+                and name like "%${name}%"
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="status != null">
+                and status = #{status,typeHandler=com.caohao.config.EnumValueTypeHandler}
+            </if>
+            <if test="processor != null and processor != ''">
+                and processor = #{processor}
+            </if>
+            <if test="replyTime != null">
+                and reply_time = #{replyTime}
+            </if>
+            <if test="replyContent != null">
+                and reply_content = #{replyContent}
+            </if>
+            <if test="number != null">
+                and number = #{number}
+            </if>
+            <if test="category != null and category != ''">
+                and category = #{category,typeHandler=com.caohao.config.EnumValueTypeHandler}
+            </if>
+            <if test="nature != null">
+                and nature = #{nature,typeHandler=com.caohao.config.EnumValueTypeHandler}
+            </if>
+        </where>
+    </select>
+    <select id="queryByUsername" resultMap="CompanyMap">
+        select * from company where user_id = #{username}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into company(id, company_number, name, description, user_id, create_time, update_time, status, processor, reply_time, reply_content, number, category, nature, company_logo)
+        values (#{id}, #{companyNumber}, #{name}, #{description}, #{userId}, #{createTime}, #{updateTime}, #{status,typeHandler=com.caohao.config.EnumValueTypeHandler}, #{processor}, #{replyTime}, #{replyContent}, #{number}, #{category,typeHandler=com.caohao.config.EnumValueTypeHandler}, #{nature,typeHandler=com.caohao.config.EnumValueTypeHandler},#{companyLogo})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into company(id, company_number, name, description, user_id, create_time, update_time, status, processor, reply_time, reply_content, number, category, nature)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.companyNumber}, #{entity.name}, #{entity.description}, #{entity.userId}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.processor}, #{entity.replyTime}, #{entity.replyContent}, #{entity.number}, #{entity.category}, #{entity.nature})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into company(company_number, name, description, user_id, create_time, update_time, status, processor, reply_time, reply_content, number, category, nature)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.companyNumber}, #{entity.name}, #{entity.description}, #{entity.userId}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.processor}, #{entity.replyTime}, #{entity.replyContent}, #{entity.number}, #{entity.category}, #{entity.nature})
+        </foreach>
+        on duplicate key update
+        company_number = values(company_number),
+        name = values(name),
+        description = values(description),
+        user_id = values(user_id),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        status = values(status),
+        processor = values(processor),
+        reply_time = values(reply_time),
+        reply_content = values(reply_content),
+        number = values(number),
+        category = values(category),
+        nature = values(nature)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update company
+        <set>
+            <if test="companyNumber != null and companyNumber != ''">
+                company_number = #{companyNumber},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="status != null">
+                status = #{status,typeHandler=com.caohao.config.EnumValueTypeHandler},
+            </if>
+            <if test="processor != null and processor != ''">
+                processor = #{processor},
+            </if>
+            <if test="replyTime != null">
+                reply_time = #{replyTime},
+            </if>
+            <if test="replyContent != null">
+                reply_content = #{replyContent},
+            </if>
+            <if test="number != null">
+                number = #{number},
+            </if>
+            <if test="category != null ">
+                category = #{category,typeHandler=com.caohao.config.EnumValueTypeHandler},
+            </if>
+            <if test="companyLogo != null ">
+                company_logo = #{companyLogo},
+            </if>
+            <if test="nature != null">
+                nature = #{nature,typeHandler=com.caohao.config.EnumValueTypeHandler},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from company where id = #{id}
+    </delete>
+
+</mapper>
+

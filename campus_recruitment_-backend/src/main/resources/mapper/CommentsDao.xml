@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caohao.dao.CommentsDao">
+
+    <resultMap type="com.caohao.pojo.entity.Comments" id="CommentsMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="articleId" column="article_id" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="recipientId" column="recipient_id" jdbcType="VARCHAR"/>
+        <result property="operatorId" column="operator_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CommentsMap">
+        select
+          id, article_id, content, recipient_id, operator_id, create_time
+        from comments
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CommentsMap">
+        select
+          id, article_id, content, recipient_id, operator_id, create_time
+        from comments
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="articleId != null and articleId != ''">
+                and article_id = #{articleId}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="recipientId != null and recipientId != ''">
+                and recipient_id = #{recipientId}
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                and operator_id = #{operatorId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+        order by 'create_time' DESC
+    </select>
+    <select id="selectByArticleId" resultMap="CommentsMap">
+        select * from comments where article_id = #{articleId}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into comments(id, article_id, content, recipient_id, operator_id, create_time)
+        values (#{id}, #{articleId}, #{content}, #{recipientId}, #{operatorId}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" >
+        insert into comments(id, article_id, content, recipient_id, operator_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.articleId}, #{entity.content}, #{entity.recipientId}, #{entity.operatorId}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into comments(article_id, content, recipient_id, operator_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.articleId}, #{entity.content}, #{entity.recipientId}, #{entity.operatorId}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        article_id = values(article_id),
+        content = values(content),
+        recipient_id = values(recipient_id),
+        operator_id = values(operator_id),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update comments
+        <set>
+            <if test="articleId != null and articleId != ''">
+                article_id = #{articleId},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="recipientId != null and recipientId != ''">
+                recipient_id = #{recipientId},
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                operator_id = #{operatorId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from comments where id = #{id}
+    </delete>
+
+</mapper>
+
