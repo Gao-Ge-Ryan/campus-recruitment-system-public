@@ -8,8 +8,8 @@
 
 ### 在线展示
 
-1. [ **bilibili演示视频（B站）记得一赞三连哦！ :tw-1f60d:**  ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
-2. [  :tw-25b6: **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
+1. [ **bilibili演示视频（B站）记得一赞三连哦！ **  ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
+2. [   **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
 
 ### 简介
 校园招聘系统、社会招聘系统、招聘网站、发布招聘信息，
@@ -36,7 +36,7 @@
 
 ### 功能详情图
 
-[  :tw-25b6: **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
+[   **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
 
 ![输入图片说明](images/微信图片_20240519200809.png)
 ![输入图片说明](images/微信图片_20240519200821.png)
@@ -61,4 +61,4 @@
 
 
 
-[  :tw-25b6: **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
+[   **系统使用演示视频** ](https://www.bilibili.com/video/BV1mU411Z7c6/?spm_id_from=333.999.0.0&vd_source=eac6949bd2385c66c0a975d5765c99a5)
